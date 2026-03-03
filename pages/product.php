@@ -8,23 +8,51 @@
 <body>
     <?php include('../includes/header.php') ?>
     <main>
+        <div class="imgTags">
+            <img src="../imgs/rei.png" alt="">
+            <ul class="tags">
+                <li>tag</li>
+                <li>tag</li>
+                <li>tag</li>
+                <li>tag</li>
+                <li>tag long</li>
+            </ul>
+        </div>
+        <div>
 
+        </div>
     </main>
     <?php include('../includes/footer.php') ?>
 </body>
 </html>
 
 <style>
-    *, body {
+    *{
         box-sizing: border-box;
         padding: 0;
         margin: 0;
     }
     body {
         width: 100%;
-        height: 400vh;
     }
     main {
-        height: 100%;
+        min-height: 100vh;
     }
+    .imgTags {
+        width: calc(100vw / 4);
+        img {
+            width: 100%;
+        }
+        .tags {
+            display: flexbox;
+            grid-template-rows: auto auto auto;
+            li {
+                width: fit-content;
+                list-style: none;
+                padding: 10px 20px;
+                background-color: black;
+                color: white;
+            }
+        }
+    } 
 </style>

@@ -1,11 +1,51 @@
 <footer>
-
+    <ul>
+        <h1>carai</h1>
+        <a href="carai">Link 1</a>
+        <a href="carai">Link long 2</a>
+        <a href="carai">Link 3</a>
+    </ul>
+    <ul>
+        <h1>carai</h1>
+        <a href="carai">Link 1</a>
+        <a href="carai">Link long 2</a>
+        <a href="carai">Link 3</a>
+    </ul>
+    <ul>
+        <h1>carai</h1>
+        <a href="carai">Link 1</a>
+        <a href="carai">Link long 2</a>
+        <a href="carai">Link 3</a>
+    </ul>
 </footer>
 
 <style>
     footer {
-        background-color: pink;
+        padding: 0 70px;
+        background-color: black;
         width: 100vw;
-        height: 100px;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: center;
+        gap: 100px;
+        ul{
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: inset #a4ffe8 0 0 20px;
+        }
+        a, h1 {
+            color: white;
+        }
+        h1 {
+            font-size: 40px;
+        }
+        a {
+            font-size: 20px;
+        }
     }
 </style>
