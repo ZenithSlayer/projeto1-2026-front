@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product</title>
+    <link rel="stylesheet" href="css/product.css">
 </head>
+
 <body>
     <?php include('../includes/header.php') ?>
     <main>
@@ -18,41 +21,21 @@
                 <li>tag long</li>
             </ul>
         </div>
-        <div>
-
+        <div class="info">
+            <h1>Titulo foda</h1>
+            <div>
+                <h2>subtitulo</h2>
+                <ul class="stars">
+                    <li>⭐</li>
+                    <li>⭐</li>
+                    <li>⭐</li>
+                    <li>⭐</li>
+                    <li>⭐</li>
+                </ul>
+            </div>
         </div>
     </main>
     <?php include('../includes/footer.php') ?>
 </body>
-</html>
 
-<style>
-    *{
-        box-sizing: border-box;
-        padding: 0;
-        margin: 0;
-    }
-    body {
-        width: 100%;
-    }
-    main {
-        min-height: 100vh;
-    }
-    .imgTags {
-        width: calc(100vw / 4);
-        img {
-            width: 100%;
-        }
-        .tags {
-            display: flexbox;
-            grid-template-rows: auto auto auto;
-            li {
-                width: fit-content;
-                list-style: none;
-                padding: 10px 20px;
-                background-color: black;
-                color: white;
-            }
-        }
-    } 
-</style>
+</html>
