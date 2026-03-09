@@ -1,23 +1,14 @@
 <footer>
-    <style>
-        <?php require('css/footer.css') ?>
-    </style>
+    <p class="creator">Made by ZenithSlayer</p>
+    <p class="secret">(happily being a Gio main (and Axl sometimes (and Sol (or any character i feel like playing))))</p>
     <ul>
-        <h1>carai</h1>
-        <a href="carai">Link 1</a>
-        <a href="carai">Link long 2</a>
-        <a href="carai">Link 3</a>
-    </ul>
-    <ul>
-        <h1>carai</h1>
-        <a href="carai">Link 1</a>
-        <a href="carai">Link long 2</a>
-        <a href="carai">Link 3</a>
-    </ul>
-    <ul>
-        <h1>carai</h1>
-        <a href="carai">Link 1</a>
-        <a href="carai">Link long 2</a>
-        <a href="carai">Link 3</a>
+        <a href=""><i class="fa-brands fa-github-alt"></i> Github</a>
+        <a href=""><i class="fa-brands fa-whatsapp"></i> Whatsapp</a>
+        <a href=""><i class="fa-brands fa-github-alt"></i> Project Front Github</a>
+        <a href=""><i class="fa-brands fa-github-alt"></i> Project Back Github</a>
     </ul>
 </footer>
+
+<style>
+    <?php require('css/footer.css') ?>
+</style>

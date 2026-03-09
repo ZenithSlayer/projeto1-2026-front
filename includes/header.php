@@ -1,16 +1,11 @@
 <header>
-    <style>
-        <?php include('css/header.css') ?>
-    </style>
+    <img class="logo" src="../../imgs/logo.png" alt="">
     <ul>
-        <a href="carai">Link 1</a>
-        <a href="carai">Link long 2</a>
-        <a href="carai">Link 3</a>
-    </ul>
-    <img class="logo" src="../imgs/rei.png" alt="">
-    <ul>
-        <a href="carai">Link 1</a>
-        <a href="carai">Link long 2</a>
-        <img class="accountLogo" src="../imgs/rei.png" alt="">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <img src="../../imgs/rei.png" alt="" srcset="">
     </ul>
 </header>
+
+<style>
+    <?php require('css/header.css') ?>
+</style>
