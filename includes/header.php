@@ -1,8 +1,8 @@
 <header>
-    <img class="logo" src="../../imgs/logo.png" alt="">
+    <img class="logo" src="../imgs/logo.png" alt="">
     <ul>
         <i class="fa-solid fa-cart-shopping"></i>
-        <img src="../../imgs/rei.png" alt="" srcset="">
+        <img src="../imgs/rei.png" alt="" srcset="">
     </ul>
 </header>
 
