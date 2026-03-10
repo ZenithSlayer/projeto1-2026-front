@@ -17,10 +17,10 @@
             <?php for ($i = 0; $i < 8; $i++) {
                 echo '<li>
                 <div class="cart">
-                    <i class="fa-solid fa-cart-plus"></i>
+                    <i class="fa-solid fa-cart-shopping"></i>
                 </div> 
                 <img src="../imgs/rei.png" alt="">
-                <p class="title">Product name</p>
+                <p class="title">Rei Plush</p>
                 <p class="price">$999,99</p>
                 <div class="stock">
                     <p>stock: </p>
@@ -48,6 +48,7 @@
         }
 
         li {
+            transition: transform 1s ease-out;
             flex: 0 0 20%;
             box-sizing: border-box;
             min-width: 200px;
@@ -82,13 +83,14 @@
             }
 
             .price {
+                font-size: clamp(16px, 2vw, 19px);
                 text-align: center;
             }
         }
 
         .title {
-            font-size: clamp(15px, 2vw, 19px);
-            ;
+            font-size: clamp(19px, 2vw, 25px);
+            text-wrap-mode: ;
             text-align: center;
             font-weight: bold;
             margin-bottom: 10px;
@@ -96,13 +98,13 @@
 
         .cart {
             opacity: 0;
-            background-color: orangered;
+            background-color: #0b823f;
             position: absolute;
             padding: 5px;
             right: 25px;
             top: 25px;
             border-radius: 5px;
-            transition: opacity .5s ease-in;
+            transition: opacity .2s ease-in;
         }
 
         li:hover{
