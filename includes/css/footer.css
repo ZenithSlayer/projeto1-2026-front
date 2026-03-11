@@ -3,8 +3,8 @@
 }
 
 @font-face {
-  font-family: 'G Gear';
-  src: url('../includes/font/GGST.OTF') format('opentype');
+    font-family: 'G Gear';
+    src: url('../includes/font/GGST.OTF') format('opentype');
 }
 
 footer {
@@ -14,6 +14,7 @@ footer {
     width: 100%;
     align-items: center;
     flex-direction: column;
+    z-index: 999;
 
     .creator,
     a {
@@ -25,7 +26,7 @@ footer {
         margin-top: 30px;
         font-size: 50px;
     }
-    
+
     .secret {
         color: rgb(80, 80, 80);
     }
