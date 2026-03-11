@@ -13,6 +13,7 @@
 <body>
     <?php include('../includes/header.php') ?>
     <main>
+        
         <ul>
             <?php for ($i = 0; $i < 8; $i++) {
                 echo '<li>
