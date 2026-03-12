@@ -1,6 +1,7 @@
 <footer>
     <p class="creator">Made by ZenithSlayer</p>
     <p class="secret">(happily being a Gio main (and Axl sometimes (and Sol (or any character i feel like playing))))</p>
+    <p class="linkLabel">Here are my links</p>
     <ul>
         <a href=""><i class="fa-brands fa-github-alt"></i> Github</a>
         <a href=""><i class="fa-brands fa-whatsapp"></i> Whatsapp</a>

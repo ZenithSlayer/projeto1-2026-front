@@ -1,6 +1,6 @@
 <header>
     <img class="logo" src="../imgs/logo.png" alt="">
-    <ul>
+    <ul class="userIcons">
         <i class="fa-solid fa-cart-shopping"></i>
         <img src="../imgs/rei.png" alt="" srcset="">
     </ul>
