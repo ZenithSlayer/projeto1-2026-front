@@ -1,110 +1,58 @@
-<div class="blackout">
-    <div class="outBox">
-        <div class="decor">
+<div class="login">
+    <div class="wrapper">
+        <div class="decoration">
             <img src="../imgs/icon.png" alt="">
         </div>
-        <div class="content">
-            <p class="title">Login</p>
-            <form class="info">
-                <div class="userInput">
-                    <p>email</p>
-                    <input type="text" name="email" id="email">
-                </div>
-                <div class="userInput">
-                    <p>password</p>
-                    <input type="text" name="password" id="password">
-                </div>
-                <input class="submit" type="submit" value="Login">
-            </form>
-        </div>
+        <form class="loginForm">
+
+        </form>
     </div>
 </div>
 
 <style>
-    .blackout {
-        background-color: rgb(0, 0, 0, 0.5);
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        right: 0;
-        z-index: 998;
+    body {
+        overflow: hidden;
+    }
 
-        .outBox {
-            position: fixed;
-            right: 50%;
-            top: 50%;
-            transform: translate(50%, -50%);
+    .login {
+        position: fixed;
+        top: 0;
+        height: 100vh;
+        width: 100vw;
+        background-color: rgb(0, 0, 0, .7);
+        z-index: 999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .wrapper {
+            height: fit-content;
+            width: fit-content;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            max-width: 500px;
-            max-height: 500px;
-            align-items: stretch
-        }
+            flex-direction: row;
 
-        .decor {
-            z-index: 1;
-            background-color: rgb(20, 194, 189);
-            width: 70px;
-            box-shadow: red 5px 0 0;
-            border-radius: 10px 0 0 10px;
-            position: relative;
+            .decoration {
+                background-color: rgb(53 181 175);
+                width: 60px;
+                height: 300px;
+                display: flex;
+                justify-content: center;
+                align-items: end;
+                box-shadow: 5px 0 0 red;
+                border-radius: 10px 0 0 10px;
+                z-index: 1;
 
-            img {
-                width: 50px;
-                position: absolute;
-                bottom: 10px;
-                right: .5em;
-            }
-        }
-
-        .content {
-            padding: 10px 40px 40px 40px;
-            border-radius: 0 10px 10px 0;
-            right: calc(100vw / 2);
-            background-color: gray;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .title {
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .userInput {
-            p {
-                font-size: 17px;
-                text-transform: capitalize;
-                color: rgb(30, 30, 30);
+                img {
+                    margin: 0 0 5px 0;
+                    object-fit: scale-down;
+                    width: 80%;
+                }
             }
 
-            input {
-                padding: 7px;
-                border-radius: 10px;
-                font-size: 20px;
-                border-style: none;
+            .loginForm {
+                width: 200px;
+                background-color: gray;
             }
-        }
-
-        .info {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .submit {
-            border-style: none;
-            background-color: rgb(20, 194, 189);
-            border-radius: 5px;
-            width: 100%;
-            font-size: 14px;
-            padding: 10px 0;
         }
     }
 </style>

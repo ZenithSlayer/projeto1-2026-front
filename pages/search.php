@@ -12,6 +12,7 @@
 
 <body>
     <?php include('../includes/header.php') ?>
+    <?php include('login.php')?> /* delete this after login is done */
     <main>
         <ul class="itemRow">
             <?php for ($i = 0; $i < 4; $i++) {
