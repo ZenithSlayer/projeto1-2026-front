@@ -1,8 +1,9 @@
 :root {
+    --dark-cyan: rgb(7, 90, 87);
     --default-cyan: rgb(11, 130, 126);
     --light-cyan: rgb(17, 194, 188);
-    --default-gray: rgb(180 180 180);
     --dark-gray: rgb(47, 47, 47);
+    --default-gray: rgb(180 180 180);
 }
 
 * {
