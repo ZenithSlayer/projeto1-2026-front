@@ -3,27 +3,28 @@ main {
         display: flex;
         flex-direction: row;
         justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 10px;
         margin: 0 0 20px 0;
 
         .info {
             font-size: 20px;
 
             .title {
-                font-size: 1em;
+                font-size: clamp(.5em, 1em, 1em);
                 
             }
-
+            
             .price {
-                font-size: .90em;
-                
+                font-size: clamp(.4em, .9em, .9em);
             }
-
+            
             .stock {
+                font-size: clamp(.3em, .7em, .7em);
                 display: flex;
                 flex-direction: row;
                 gap: 3px;
                 font-weight: 600;
-                font-size: .70em;
             }
         }
 
@@ -35,7 +36,8 @@ main {
             border-radius: 5px;
 
             img {
-                height: 15vw;
+                min-width: 100%;
+                width: 15vw;
                 border-radius: 5px;
             }
 
