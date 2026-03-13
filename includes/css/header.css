@@ -25,14 +25,14 @@ header {
             width: auto;
             color: white;
             background-color: rgb(46, 46, 46);
-            font-size: 2em;
+            font-size: 1.5em;
             padding: 10px;
             transition: all .5s;
         }
-
+        
         i:hover {
-            color: black;
-            background-color: rgb(11, 130, 126);
+            text-shadow: 0 0 10px white;
+            background-color: rgb(100, 100, 100);
         }
         
         img {
