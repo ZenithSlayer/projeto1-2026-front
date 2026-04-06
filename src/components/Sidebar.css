@@ -1,0 +1,31 @@
+.sidebar {
+  background: #0f172a;
+  color: #fff;
+  min-height: calc(100vh - 60px);
+  padding-top: 20px;
+  transition: width 0.3s ease;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.link.active {
+  background: #334155;
+}
+
+.link.open {
+  justify-content: flex-start;
+}
+
+.link.closed {
+  justify-content: center;
+}
+
+.link span {
+  margin-left: 10px;
+}
