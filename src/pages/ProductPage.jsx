@@ -10,7 +10,7 @@ const ProductPage = ({ onAddToCart }) => {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://192.168.0.243:3001/products/${id}`);
+        const response = await fetch(`http://localhost:3001/products/${id}`);
         if (!response.ok) throw new Error("Product not found");
 
         const data = await response.json();

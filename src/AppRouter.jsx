@@ -6,8 +6,7 @@ const About = lazy(() => import("./pages/About"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage"));
-const Login = lazy(() => import("./pages/Login"));
-const Register = lazy(() => import("./pages/Register"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
 
 const isAuthenticated = () => !!localStorage.getItem("token");
 
@@ -23,7 +22,7 @@ const PublicRoute = ({ children }) => {
   );
 };
 
-const AppRouter = () => {
+const AppRouter = ({ setToast }) => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -31,18 +30,10 @@ const AppRouter = () => {
       <Route path="/product/:id" element={<ProductPage />} />
 
       <Route
-        path="/login"
+        path="/auth"
         element={
           <PublicRoute>
-            <Login />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <PublicRoute>
-            <Register />
+            <AuthPage setToast={setToast} />
           </PublicRoute>
         }
       />
@@ -51,13 +42,12 @@ const AppRouter = () => {
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <Dashboard />
+            <Dashboard setToast={setToast} />
           </ProtectedRoute>
         }
       />
 
       <Route path="/error/:statusCode" element={<ErrorPage />} />
-
       <Route path="*" element={<Navigate to="/error/404" replace />} />
     </Routes>
   );

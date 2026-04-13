@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import image from '../assets/ToastImage.jpg'
+import image from "../assets/ToastImage.jpg";
 import "./Toast.css";
 
 const Toast = ({ message, type = "error", duration = 4000, onClose }) => {
@@ -7,8 +7,14 @@ const Toast = ({ message, type = "error", duration = 4000, onClose }) => {
 
   useEffect(() => {
     setVisible(true);
-    const timer = setTimeout(() => setVisible(false), duration);
-    const closeTimer = setTimeout(() => onClose?.(), duration + 500);
+
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, duration);
+
+    const closeTimer = setTimeout(() => {
+      onClose?.();
+    }, duration + 300);
 
     return () => {
       clearTimeout(timer);

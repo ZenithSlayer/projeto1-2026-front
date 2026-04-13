@@ -10,7 +10,7 @@ const ItemRow = ({ onAddToCart, offset }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://192.168.0.243:3001/products");
+        const response = await fetch("http://localhost:3001/products");
 
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -27,7 +27,7 @@ const ItemRow = ({ onAddToCart, offset }) => {
     };
 
     fetchProducts();
-  }, []);
+  }, [offset]);
 
   if (loading) return <h2>Loading products...</h2>;
   if (error) return <h2>Error: {error}</h2>;

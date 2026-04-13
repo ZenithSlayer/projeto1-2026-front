@@ -12,15 +12,14 @@ import logo from "../assets/logo.png";
 const Header = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-  const isLoggedIn = !!token;
+  const isLoggedIn = !!localStorage.getItem("token");
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
       localStorage.removeItem("token");
-      navigate("/login");
+      navigate("/auth");
     } else {
-      navigate("/login");
+      navigate("/auth");
     }
   };
 
@@ -32,7 +31,10 @@ const Header = ({ toggleSidebar }) => {
 
       <img className="logo" src={logo} alt="Logo" />
 
-      <button onClick={handleAuthClick} className={isLoggedIn ? 'logout-button' : 'auth-button'}>
+      <button
+        onClick={handleAuthClick}
+        className={isLoggedIn ? "logout-button" : "auth-button"}
+      >
         <FontAwesomeIcon
           icon={isLoggedIn ? faRightFromBracket : faRightToBracket}
         />
