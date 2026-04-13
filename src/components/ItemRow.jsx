@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../ItemRow.css";
 import StoreItem from "../components/StoreItem";
+import "./ItemRow.css";
 
 const ItemRow = ({ onAddToCart, offset }) => {
   const [products, setProducts] = useState([]);
@@ -18,7 +18,6 @@ const ItemRow = ({ onAddToCart, offset }) => {
 
         const data = await response.json();
 
-        // Limit to 4 items
         setProducts(data.slice(offset, offset+4));
       } catch (err) {
         setError(err.message);

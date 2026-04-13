@@ -1,7 +1,6 @@
 .sidebar {
   background: #0f172a;
   color: #fff;
-  min-height: calc(100vh - 60px);
   padding-top: 20px;
   transition: width 0.3s ease;
 }

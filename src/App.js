@@ -16,7 +16,7 @@ function App() {
       <div style={{ display: "flex" }}>
         <Sidebar isOpen={sidebarStatus} />
 
-        <main style={styles.main}>
+        <main>
           <AppRouter />
         </main>
       </div>
@@ -25,14 +25,5 @@ function App() {
     </BrowserRouter>
   );
 }
-
-const styles = {
-  main: {
-    padding: "20px",
-    minHeight: "calc(100vh - 110px)",
-    background: "#f1f5f9",
-    width: "100%",
-  },
-};
 
 export default App;

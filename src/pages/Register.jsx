@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
+import "./Register.css";
+import Img from "../assets/register.png";
 
 const isValidEmail = (email) => {
   const basicCheck = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -16,11 +18,10 @@ const isValidEmail = (email) => {
     "protonmail.com",
     "aol.com",
     "gmx.com",
-    "yandex.com"
+    "yandex.com",
   ];
 
   const domain = email.split("@")[1].toLowerCase();
-
   return allowedDomains.includes(domain);
 };
 
@@ -56,6 +57,7 @@ const isValidCPF = (cpf) => {
 
   return true;
 };
+
 const formatCPF = (cpf) => {
   const cleaned = cpf.replace(/\D/g, "").slice(0, 11);
   const parts = [];
@@ -74,7 +76,8 @@ const Register = () => {
     password: "",
     cpf: "",
   });
-  const [toast, setToast] = useState(null); // {message, type}
+
+  const [toast, setToast] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -86,54 +89,72 @@ const Register = () => {
     e.preventDefault();
     setToast(null);
 
-    // Validation
+    if (!form.name.trim())
+      return setToast({ message: "Name is required.", type: "error" });
+
+    if (!form.email.trim())
+      return setToast({ message: "Email is required.", type: "error" });
+
+    if (!form.password)
+      return setToast({ message: "Password is required.", type: "error" });
+
+    if (!form.cpf.trim())
+      return setToast({ message: "CPF is required.", type: "error" });
+
     if (form.name.trim().length < 2)
       return setToast({
         message: "Name must be at least 2 characters.",
         type: "error",
       });
+
     if (!isValidEmail(form.email))
       return setToast({
         message: "Please enter a valid email.",
         type: "error",
       });
+
     if (form.password.length < 6)
       return setToast({
         message: "Password must be at least 6 characters.",
         type: "error",
       });
+
     if (!isValidCPF(form.cpf))
       return setToast({
-        message: "Please enter a valid CPF (11 digits).",
+        message: "Please enter a valid CPF.",
         type: "error",
       });
 
     try {
       const payload = { ...form, cpf: form.cpf.replace(/\D/g, "") };
-      const response = await fetch("http://192.168.0.243:3001/users/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+
+      const response = await fetch(
+        "http://192.168.0.243:3001/users/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Registration failed");
 
-      // Show success toast
+      localStorage.setItem("token", data.token);
+
       setToast({
-        message: "Registration successful! Please login.",
+        message: "Registration successful!",
         type: "success",
       });
 
-      // Navigate after a short delay to let user see toast
-      setTimeout(() => navigate("/login"), 3000);
+      setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       setToast({ message: err.message, type: "error" });
     }
   };
 
   return (
-    <div className="auth-container">
+    <>
       {toast && (
         <Toast
           message={toast.message}
@@ -141,43 +162,51 @@ const Register = () => {
           onClose={() => setToast(null)}
         />
       )}
-      <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={form.name}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="text"
-          name="cpf"
-          placeholder="CPF (123.456.789-10)"
-          value={form.cpf}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Register</button>
-      </form>
-    </div>
+
+      <div className="auth-container">
+        <div>
+          <img src={Img} alt="Register" />
+
+          <form onSubmit={handleSubmit} noValidate>
+            <h2>Register</h2>
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={form.name}
+              onChange={handleChange}
+            />
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+            />
+
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+            />
+
+            <input
+              type="text"
+              name="cpf"
+              placeholder="CPF (123.456.789-10)"
+              value={form.cpf}
+              onChange={handleChange}
+            />
+
+            <button type="submit">Register</button>
+          </form>
+        </div>
+      </div>
+    </>
   );
 };
 

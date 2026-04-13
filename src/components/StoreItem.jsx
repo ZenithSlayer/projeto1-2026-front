@@ -1,5 +1,5 @@
 import React from "react";
-import "./StoreItem.css"; // import the CSS file
+import "./StoreItem.css";
 import { useNavigate } from "react-router-dom";
 
 const StoreItem = ({ item, onAddToCart }) => {

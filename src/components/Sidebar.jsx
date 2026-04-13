@@ -11,10 +11,15 @@ import "./Sidebar.css";
 const Sidebar = ({ isOpen }) => {
   const location = useLocation();
 
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
+
   const menu = [
     { name: "Home", path: "/", icon: faHome },
     { name: "About", path: "/about", icon: faInfoCircle },
-    { name: "Dashboard", path: "/dashboard", icon: faTachometerAlt },
+    ...(isLoggedIn
+      ? [{ name: "Dashboard", path: "/dashboard", icon: faTachometerAlt }]
+      : []),
   ];
 
   return (
@@ -29,12 +34,11 @@ const Sidebar = ({ isOpen }) => {
           <Link
             key={item.path}
             to={item.path}
-            className={`link ${
-              isActive ? "active" : ""
-            } ${isOpen ? "open" : "closed"}`}
+            className={`link ${isActive ? "active" : ""} ${
+              isOpen ? "open" : "closed"
+            }`}
           >
             <FontAwesomeIcon icon={item.icon} />
-
             {isOpen && <span>{item.name}</span>}
           </Link>
         );

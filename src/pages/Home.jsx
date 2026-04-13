@@ -5,9 +5,8 @@ import "./Home.css";
 const Home = () => {
   return (
     <div className="home-container">
-      <h1>Welcome to Merch Haven!</h1>
+      <h1>Welcome to 214K!</h1>
         <ItemRow offset={0} />
-        <ItemRow offset={4} />
     </div>
   );
 };

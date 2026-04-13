@@ -1,11 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
+import "./Register.css";
+import Img from "../assets/register.png";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({
+    identifier: "",
+    password: "",
+  });
+
   const [toast, setToast] = useState(null);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -14,9 +21,17 @@ const Login = () => {
     e.preventDefault();
     setToast(null);
 
-    // Basic client-side validation
-    if (!form.email) return setToast({ message: "Email is required.", type: "error" });
-    if (!form.password) return setToast({ message: "Password is required.", type: "error" });
+    if (!form.identifier)
+      return setToast({
+        message: "Email or username is required.",
+        type: "error",
+      });
+
+    if (!form.password)
+      return setToast({
+        message: "Password is required.",
+        type: "error",
+      });
 
     try {
       const response = await fetch("http://localhost:3001/users/login", {
@@ -28,13 +43,10 @@ const Login = () => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Login failed");
 
-      // Save token in localStorage
       localStorage.setItem("token", data.token);
 
-      // Show success toast
       setToast({ message: "Login successful!", type: "success" });
 
-      // Navigate after short delay
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       setToast({ message: err.message, type: "error" });
@@ -42,29 +54,43 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
-      {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={handleChange}
-          required
+    <>
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast(null)}
         />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
-    </div>
+      )}
+
+      <div className="auth-container">
+        <div>
+          <img src={Img} alt="Login" />
+
+          <form onSubmit={handleSubmit} noValidate>
+            <h2>Login</h2>
+
+            <input
+              type="text"
+              name="identifier"
+              placeholder="Email or Username"
+              value={form.identifier}
+              onChange={handleChange}
+            />
+
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+            />
+
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      </div>
+    </>
   );
 };
 
