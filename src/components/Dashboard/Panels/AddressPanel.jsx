@@ -15,6 +15,9 @@ export const AddressPanel = ({ data, setData, setToast }) => {
     postal_code: ""
   });
 
+  // Safe access to addresses list
+  const addresses = data?.addresses || [];
+
   const resetForm = () => {
     setForm({ country: "", state: "", city: "", street: "", number: "", postal_code: "" });
     setEditingId(null);
@@ -25,6 +28,7 @@ export const AddressPanel = ({ data, setData, setToast }) => {
   };
 
   const handleEdit = (addr) => {
+    if (!addr) return;
     setEditingId(addr.id);
     setForm({
       country: addr.country || "",
@@ -41,10 +45,9 @@ export const AddressPanel = ({ data, setData, setToast }) => {
       await addressesApi.setFavorite(id);
       setData(prev => ({
         ...prev,
-        addresses: prev.addresses.map(a => ({
-          ...a,
-          is_favorite: a.id === id
-        }))
+        addresses: prev.addresses.map(a => 
+          a ? { ...a, is_favorite: a.id === id ? 1 : 0 } : a
+        )
       }));
       setToast({ message: "Favorite address updated", type: "success" });
     } catch (err) {
@@ -58,7 +61,7 @@ export const AddressPanel = ({ data, setData, setToast }) => {
       await addressesApi.delete(id);
       setData(prev => ({
         ...prev,
-        addresses: prev.addresses.filter(a => a.id !== id)
+        addresses: prev.addresses.filter(a => a && a.id !== id)
       }));
       setToast({ message: "Address deleted", type: "success" });
     } catch (err) {
@@ -74,28 +77,33 @@ export const AddressPanel = ({ data, setData, setToast }) => {
     );
     
     if (!allFieldsFilled) {
-      return setToast({ message: "All fields are required to save an address.", type: "error" });
+      return setToast({ message: "All fields are required.", type: "error" });
     }
 
     try {
       if (editingId) {
-        const res = await addressesApi.update(editingId, form);
+        await addressesApi.update(editingId, form);
         setData(prev => ({
           ...prev,
-          addresses: prev.addresses.map(a => a.id === editingId ? res.address : a)
+          addresses: prev.addresses.map(a => 
+            a?.id === editingId ? { ...a, ...form } : a
+          )
         }));
         setToast({ message: "Address updated successfully", type: "success" });
       } else {
         const res = await addressesApi.create(form);
+        // If backend doesn't return res.address, we use the form data + temp ID
+        const newAddress = res.address || { ...form, id: Date.now(), is_favorite: 0 };
         setData(prev => ({
           ...prev,
-          addresses: [...prev.addresses, res.address]
+          addresses: [...prev.addresses, newAddress]
         }));
         setToast({ message: "New address added successfully", type: "success" });
       }
       resetForm();
     } catch (err) {
-      setToast({ message: err.message || "Operation failed", type: "error" });
+      const errorMsg = err.response?.data?.error || err.message || "Operation failed";
+      setToast({ message: errorMsg, type: "error" });
     }
   };
 
@@ -103,29 +111,34 @@ export const AddressPanel = ({ data, setData, setToast }) => {
     <div className="panel">
       <h2>Your Addresses</h2>
       <div className="item-list">
-        {data.addresses.length === 0 ? (
+        {addresses.length === 0 ? (
           <p className="empty-message">No addresses saved yet.</p>
         ) : (
-          data.addresses.map(addr => (
-            <div key={addr.id} className="item">
-              <div className="item-info">
-                <FontAwesomeIcon 
-                  icon={addr.is_favorite ? solidStar : regularStar} 
-                  className={`favorite-icon ${addr.is_favorite ? "active" : ""}`}
-                  onClick={() => handleFavorite(addr.id)} 
-                />
-                <div className="address-details">
-                  <strong>{addr.street}, {addr.number}</strong>
-                  <span>{addr.city}, {addr.state}, {addr.country}</span>
-                  <small>{addr.postal_code}</small>
+          addresses.map(addr => {
+            // CRITICAL: Guard against undefined address items
+            if (!addr) return null;
+
+            return (
+              <div key={addr.id} className="item">
+                <div className="item-info">
+                  <FontAwesomeIcon 
+                    icon={addr?.is_favorite ? solidStar : regularStar} 
+                    className={`favorite-icon ${addr?.is_favorite ? "active" : ""}`}
+                    onClick={() => handleFavorite(addr.id)} 
+                  />
+                  <div className="address-details">
+                    <strong>{addr.street || "Unknown Street"}, {addr.number || "N/A"}</strong>
+                    <span>{addr.city}, {addr.state}, {addr.country}</span>
+                    <small>{addr.postal_code}</small>
+                  </div>
+                </div>
+                <div className="actions">
+                  <button className="edit-btn" onClick={() => handleEdit(addr)}>Edit</button>
+                  <button className="delete-btn" onClick={() => handleDelete(addr.id)}>Delete</button>
                 </div>
               </div>
-              <div className="actions">
-                <button className="edit-btn" onClick={() => handleEdit(addr)}>Edit</button>
-                <button className="delete-btn" onClick={() => handleDelete(addr.id)}>Delete</button>
-              </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
       <hr />
@@ -136,37 +149,31 @@ export const AddressPanel = ({ data, setData, setToast }) => {
             placeholder="Country" 
             value={form.country} 
             onChange={e => handleFieldChange("country", e.target.value)} 
-            required 
           />
           <input 
             placeholder="State" 
             value={form.state} 
             onChange={e => handleFieldChange("state", e.target.value)} 
-            required 
           />
           <input 
             placeholder="City" 
             value={form.city} 
             onChange={e => handleFieldChange("city", e.target.value)} 
-            required 
           />
           <input 
             placeholder="Street" 
             value={form.street} 
             onChange={e => handleFieldChange("street", e.target.value)} 
-            required 
           />
           <input 
             placeholder="Number" 
             value={form.number} 
             onChange={e => handleFieldChange("number", e.target.value.replace(/\D/g, ""))} 
-            required 
           />
           <input 
             placeholder="Postal Code" 
             value={form.postal_code} 
             onChange={e => handleFieldChange("postal_code", e.target.value)} 
-            required 
           />
         </div>
         <div className="form-actions">

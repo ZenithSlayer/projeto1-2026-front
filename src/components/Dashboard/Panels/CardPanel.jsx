@@ -11,12 +11,17 @@ export const CardPanel = ({ data, setData, setToast }) => {
     expiration_date: ""
   });
 
+  // Safe access to cards with a fallback to an empty array
+  const cards = data?.cards || [];
+
   const handleFavorite = async (id) => {
     try {
       await api.put(`/users/card/${id}/favorite`);
       setData(prev => ({
         ...prev,
-        cards: prev.cards.map(c => ({ ...c, is_favorite: c.id === id }))
+        cards: prev.cards.map(c => 
+          c ? { ...c, is_favorite: c.id === id ? 1 : 0 } : c
+        )
       }));
       setToast({ message: "Favorite card updated", type: "success" });
     } catch {
@@ -29,7 +34,7 @@ export const CardPanel = ({ data, setData, setToast }) => {
       await api.delete(`/users/card/${id}`);
       setData(prev => ({
         ...prev,
-        cards: prev.cards.filter(c => c.id !== id)
+        cards: prev.cards.filter(c => c && c.id !== id)
       }));
     } catch {
       setToast({ message: "Error deleting card", type: "error" });
@@ -44,11 +49,25 @@ export const CardPanel = ({ data, setData, setToast }) => {
 
     try {
       const res = await api.post("/users/card", form);
-      setData(prev => ({ ...prev, cards: [...prev.cards, res.card] }));
+      
+      // FIX: Since your backend doesn't return the new card object,
+      // we need to trigger a fresh fetch or manually construct the item.
+      // Ideally, the backend should return the new card.
+      if (res) {
+        setToast({ message: "Card added. Refreshing...", type: "success" });
+        // Option 1: If your parent has a reload function, call it here.
+        // Option 2: Manually add a placeholder if backend returns nothing:
+        const newCard = { 
+            id: Date.now(), // Temporary ID until refresh
+            card_number: form.card_number, 
+            is_favorite: 0 
+        };
+        setData(prev => ({ ...prev, cards: [...prev.cards, newCard] }));
+      }
+      
       setForm({ card_number: "", security_code: "", expiration_date: "" });
-      setToast({ message: "Card added", type: "success" });
     } catch (err) {
-      setToast({ message: err.message, type: "error" });
+      setToast({ message: err?.response?.data?.error || "Error adding card", type: "error" });
     }
   };
 
@@ -56,24 +75,30 @@ export const CardPanel = ({ data, setData, setToast }) => {
     <div className="panel">
       <h2>Payment Methods</h2>
       <div className="item-list">
-        {data.cards.length === 0 ? (
+        {cards.length === 0 ? (
           <p className="empty-message">No cards saved yet.</p>
         ) : (
-          data.cards.map((card) => (
-            <div key={card.id} className="item">
-              <div className="item-info">
-                <FontAwesomeIcon
-                  icon={card.is_favorite ? solidStar : regularStar}
-                  className={`favorite-icon ${card.is_favorite ? "active" : ""}`}
-                  onClick={() => handleFavorite(card.id)}
-                />
-                <span>Card ending in {card.card_number.slice(-4)}</span>
+          cards.map((card) => {
+            // CRITICAL FIX: Guard against undefined/null cards in the array
+            if (!card) return null;
+
+            return (
+              <div key={card.id} className="item">
+                <div className="item-info">
+                  <FontAwesomeIcon
+                    // Optional chaining ?. is the final layer of safety
+                    icon={card?.is_favorite ? solidStar : regularStar}
+                    className={`favorite-icon ${card?.is_favorite ? "active" : ""}`}
+                    onClick={() => handleFavorite(card.id)}
+                  />
+                  <span>Card ending in {card.card_number?.slice(-4) || "####"}</span>
+                </div>
+                <button className="delete-btn" onClick={() => handleDelete(card.id)}>
+                  Delete
+                </button>
               </div>
-              <button className="delete-btn" onClick={() => handleDelete(card.id)}>
-                Delete
-              </button>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

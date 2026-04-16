@@ -4,25 +4,29 @@ const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 const API_URL = "http://localhost:3001/cart";
-
 const getToken = () => localStorage.getItem("token");
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
   const fetchCart = useCallback(async () => {
+    const token = getToken();
+    if (!token) return; // Don't fetch if not logged in
+
     try {
       const res = await fetch(API_URL, {
         headers: {
-          Authorization: `Bearer ${getToken()}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
 
       const data = await res.json();
-      setCart(data.items || []);
+      // Ensure we always set an array to avoid .map() crashes
+      setCart(Array.isArray(data) ? data : data.items || []);
     } catch (err) {
       console.error("Error loading cart:", err);
+      setCart([]); 
     }
   }, []);
 
@@ -86,16 +90,8 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
-  return (
-    <CartContext.Provider
-      value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-      }}
-    >
+return (
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, fetchCart }}>
       {children}
     </CartContext.Provider>
   );
