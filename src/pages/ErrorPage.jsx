@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import './ErrorPage.css'
+import './style/ErrorPage.css'
 
 const ErrorPage = () => {
   const { statusCode } = useParams();

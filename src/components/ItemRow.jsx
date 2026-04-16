@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import StoreItem from "../components/StoreItem";
-import "./ItemRow.css";
+import "./style/ItemRow.css";
 
 const ItemRow = ({ offset = 0 }) => {
   const [products, setProducts] = useState([]);

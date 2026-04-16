@@ -1,6 +1,7 @@
 import React from "react";
-import "./StoreItem.css";
+import "./style/StoreItem.css";
 import { useNavigate } from "react-router-dom";
+import placeHolder from '../assets/placeHolder.png';
 
 const StoreItem = ({ item }) => {
   const navigate = useNavigate();
@@ -10,8 +11,7 @@ const StoreItem = ({ item }) => {
       className="store-item"
       onClick={() => navigate(`/product/${item.id}`, { replace: true })}
     >
-      <img src={item.image} alt={item.name} />
-      <h3>{item.id}</h3>
+      <img src={item.image || placeHolder} alt={item.name} />
       <h3>{item.name}</h3>
       <p className="description">{item.description}</p>
       <p className="price">${item.price}</p>

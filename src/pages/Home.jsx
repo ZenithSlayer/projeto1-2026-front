@@ -1,6 +1,6 @@
 import React from "react";
 import ItemRow from '../components/ItemRow'
-import "./Home.css";
+import "./style/Home.css";
 
 const Home = () => {
   return (

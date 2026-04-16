@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Login from "../components/Login";
 import Register from "../components/Register";
 import Img from "../assets/register.png";
-import "./AuthPage.css";
+import "./style/AuthPage.css";
 
 const AuthPage = ({ setToast }) => {
   const [mode, setMode] = useState("login");

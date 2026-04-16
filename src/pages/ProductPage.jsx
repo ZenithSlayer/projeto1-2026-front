@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import ItemRow from "../components/ItemRow";
-import "./ProductPage.css";
+import placeHolder from '../assets/placeHolder.png';
+import "./style/ProductPage.css";
 
 const ProductPage = ({ onAddToCart, setToast }) => {
   const { id } = useParams();
@@ -11,6 +12,11 @@ const ProductPage = ({ onAddToCart, setToast }) => {
   const [error, setError] = useState("");
 
   const [quantity, setQuantity] = useState(1);
+  const location = useLocation();
+
+  useEffect(() => {
+    setQuantity(1);
+  }, [location]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -51,7 +57,7 @@ const ProductPage = ({ onAddToCart, setToast }) => {
     <div className="wrapper">
       <div className="product-page">
         <div className="product-card">
-          <img src={product.image_url} alt={product.name} />
+          <img src={product.image_url || placeHolder} alt={product.name} />
 
           <div className="product-info">
             <h1>{product.name}</h1>

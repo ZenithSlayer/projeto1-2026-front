@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
-import "./Dashboard.css";
+import "./style/Dashboard.css";
 
 const API_URL = "http://localhost:3001/users";
 const PRODUCTS_URL = "http://localhost:3001/products";
@@ -54,6 +54,7 @@ const Dashboard = ({ setToast }) => {
   const fetchUserDashboardData = async () => {
     try {
       const token = getToken();
+      console.log('Token:', token);
       if (!token) return navigate("/login");
 
       const response = await fetch(`${API_URL}/me`, {
@@ -138,95 +139,95 @@ const Dashboard = ({ setToast }) => {
         method: "PUT",
         headers: authHeaders(),
       });
-      
+
       setToast({ message: "Favorite Update", type: "success" });
       if (!res.ok) throw new Error();
-      
+
       setAddresses((p) =>
         p.map((a) => ({ ...a, is_favorite: a.id === id }))
-    );
-  } catch {
-    setToast({ message: "Error updating favorite", type: "error" });
-  }
-};
+      );
+    } catch {
+      setToast({ message: "Error updating favorite", type: "error" });
+    }
+  };
 
-const createCard = async (e) => {
-  e.preventDefault();
+  const createCard = async (e) => {
+    e.preventDefault();
 
-  const { card_number, security_code, expiration_date } = cardForm;
+    const { card_number, security_code, expiration_date } = cardForm;
 
-  if (!card_number || !security_code || !expiration_date) {
-    return setToast({
-      message: "All fields are required",
-      type: "error",
-    });
-  }
+    if (!card_number || !security_code || !expiration_date) {
+      return setToast({
+        message: "All fields are required",
+        type: "error",
+      });
+    }
 
-  if (card_number.length < 16) {
-    return setToast({
-      message: "Card number must be 16 digits",
-      type: "error",
-    });
-  }
+    if (card_number.length < 16) {
+      return setToast({
+        message: "Card number must be 16 digits",
+        type: "error",
+      });
+    }
 
-  if (security_code.length < 3) {
-    return setToast({
-      message: "Invalid security code",
-      type: "error",
-    });
-  }
+    if (security_code.length < 3) {
+      return setToast({
+        message: "Invalid security code",
+        type: "error",
+      });
+    }
 
-  try {
-    const response = await fetch(`${API_URL}/card`, {
-      method: "POST",
-      headers: authHeaders(),
-      body: JSON.stringify(cardForm),
-    });
+    try {
+      const response = await fetch(`${API_URL}/card`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify(cardForm),
+      });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
 
-    setCards((p) => [...p, data.card]);
-    setToast({ message: "Card added", type: "success" });
+      setCards((p) => [...p, data.card]);
+      setToast({ message: "Card added", type: "success" });
 
-    setCardForm({
-      card_number: "",
-      security_code: "",
-      expiration_date: "",
-    });
-  } catch (err) {
-    setToast({ message: err.message, type: "error" });
-  }
-};
+      setCardForm({
+        card_number: "",
+        security_code: "",
+        expiration_date: "",
+      });
+    } catch (err) {
+      setToast({ message: err.message, type: "error" });
+    }
+  };
 
-const deleteCard = async (id) => {
-  try {
-    await fetch(`${API_URL}/card/${id}`, {
-      method: "DELETE",
-      headers: authHeaders(),
-    });
-    
-    setCards((p) => p.filter((c) => c.id !== id));
-  } catch {
-    setToast({ message: "Error deleting card", type: "error" });
-  }
-};
+  const deleteCard = async (id) => {
+    try {
+      await fetch(`${API_URL}/card/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
 
-const setFavoriteCard = async (id) => {
-  try {
-    const res = await fetch(`${API_URL}/card/${id}/favorite`, {
-      method: "PUT",
-      headers: authHeaders(),
-    });
-    
-    setToast({ message: "Favorite Update", type: "success" });
-    if (!res.ok) throw new Error();
-    
-    setCards((p) =>
-      p.map((c) => ({ ...c, is_favorite: c.id === id }))
-  );
-} catch {
-  setToast({ message: "Error updating favorite", type: "error" });
+      setCards((p) => p.filter((c) => c.id !== id));
+    } catch {
+      setToast({ message: "Error deleting card", type: "error" });
+    }
+  };
+
+  const setFavoriteCard = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/card/${id}/favorite`, {
+        method: "PUT",
+        headers: authHeaders(),
+      });
+
+      setToast({ message: "Favorite Update", type: "success" });
+      if (!res.ok) throw new Error();
+
+      setCards((p) =>
+        p.map((c) => ({ ...c, is_favorite: c.id === id }))
+      );
+    } catch {
+      setToast({ message: "Error updating favorite", type: "error" });
     }
   };
 
@@ -334,11 +335,15 @@ const setFavoriteCard = async (id) => {
         {activeTab === "orders" && (
           <div className="panel">
             <h2>Orders</h2>
-            {orders.map((o) => (
-              <div key={o.id} className="item">
-                #{o.id} - {o.status} - ${o.total}
-              </div>
-            ))}
+            {orders.length === 0 ? (
+              <div>No orders available</div>
+            ) : (
+              orders.map((o) => (
+                <div key={o.id} className="item">
+                  #{o.id} - {o.status} - ${o.total}
+                </div>
+              ))
+            )}
           </div>
         )}
 
