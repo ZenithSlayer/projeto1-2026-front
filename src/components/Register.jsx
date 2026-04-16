@@ -89,6 +89,10 @@ const Register = ({ setToast }) => {
 
       if (!response.ok) throw new Error(data.error || "Register failed");
 
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
+
       setToast({ message: "Registered successfully!", type: "success" });
 
       setTimeout(() => navigate("/dashboard"), 1000);

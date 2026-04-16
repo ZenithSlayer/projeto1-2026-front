@@ -16,7 +16,7 @@ const CartPage = () => {
   const handleDecrease = (item) => {
     const newQty = (item.quantity || 1) - 1;
 
-    if (newQty < 1) return; // 🚫 prevent 0 or negative
+    if (newQty < 1) return;
 
     updateQuantity(item.id, newQty);
   };

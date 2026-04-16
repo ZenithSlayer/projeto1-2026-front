@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
+import { productsApi } from "../services/products";
 import ItemRow from "../components/ItemRow";
 import placeHolder from '../assets/placeHolder.png';
 import "./style/ProductPage.css";
 
 const ProductPage = ({ onAddToCart, setToast }) => {
   const { id } = useParams();
-
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [quantity, setQuantity] = useState(1);
   const location = useLocation();
 
@@ -20,12 +19,9 @@ const ProductPage = ({ onAddToCart, setToast }) => {
 
   useEffect(() => {
     const fetchProduct = async () => {
+      setLoading(true);
       try {
-        const response = await fetch(`http://localhost:3001/products/${id}`);
-
-        if (!response.ok) throw new Error("Product not found");
-
-        const data = await response.json();
+        const data = await productsApi.getById(id);
         setProduct(data);
       } catch (err) {
         setError(err.message);

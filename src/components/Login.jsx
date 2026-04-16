@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { authApi } from "../services/auth";
 
 const Login = ({ setToast }) => {
   const navigate = useNavigate();
@@ -9,12 +10,12 @@ const Login = ({ setToast }) => {
     password: "",
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (input) => {
+    setForm({ ...form, [input.target.name]: input.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (input) => {
+    input.preventDefault();
 
     if (!form.identifier)
       return setToast({
@@ -26,23 +27,13 @@ const Login = ({ setToast }) => {
       return setToast({ message: "Password is required.", type: "error" });
 
     try {
-      const response = await fetch("http://localhost:3001/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          identifier: form.identifier,
-          password: form.password,
-        }),
+      const data = await authApi.login({
+        identifier: form.identifier,
+        password: form.password,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error || "Login failed");
-
       localStorage.setItem("token", data.token);
-
       setToast({ message: "Login successful!", type: "success" });
-
       setTimeout(() => navigate("/dashboard"), 1000);
     } catch (err) {
       setToast({ message: err.message, type: "error" });

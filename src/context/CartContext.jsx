@@ -10,7 +10,6 @@ const getToken = () => localStorage.getItem("token");
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
-  // Memoizing the fetchCart function using useCallback
   const fetchCart = useCallback(async () => {
     try {
       const res = await fetch(API_URL, {
@@ -25,12 +24,11 @@ export const CartProvider = ({ children }) => {
     } catch (err) {
       console.error("Error loading cart:", err);
     }
-  }, []); // Empty dependency array, so it only changes if something in the hook changes
+  }, []);
 
-  // Run fetchCart once when the component mounts
   useEffect(() => {
     fetchCart();
-  }, [fetchCart]); // Now fetchCart is a dependency, and it won't cause infinite loops
+  }, [fetchCart]);
 
   const addToCart = async (product, quantity) => {
     try {
@@ -46,7 +44,7 @@ export const CartProvider = ({ children }) => {
         }),
       });
 
-      await fetchCart(); // Re-fetch cart after adding an item
+      await fetchCart();
     } catch (err) {
       console.error("Add to cart error:", err);
     }
@@ -61,7 +59,7 @@ export const CartProvider = ({ children }) => {
         },
       });
 
-      setCart((prev) => prev.filter((item) => item.id !== id)); // Update cart state
+      setCart((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       console.error("Remove error:", err);
     }
@@ -78,14 +76,14 @@ export const CartProvider = ({ children }) => {
         body: JSON.stringify({ quantity }),
       });
 
-      await fetchCart(); // Re-fetch cart after updating quantity
+      await fetchCart();
     } catch (err) {
       console.error("Update error:", err);
     }
   };
 
   const clearCart = () => {
-    setCart([]); // Clear the cart from state
+    setCart([]);
   };
 
   return (
