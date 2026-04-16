@@ -17,7 +17,10 @@ const Login = ({ setToast }) => {
     e.preventDefault();
 
     if (!form.identifier)
-      return setToast({ message: "Email or username is required.", type: "error" });
+      return setToast({
+        message: "Email or username is required.",
+        type: "error",
+      });
 
     if (!form.password)
       return setToast({ message: "Password is required.", type: "error" });
@@ -26,7 +29,10 @@ const Login = ({ setToast }) => {
       const response = await fetch("http://localhost:3001/users/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          identifier: form.identifier,
+          password: form.password,
+        }),
       });
 
       const data = await response.json();

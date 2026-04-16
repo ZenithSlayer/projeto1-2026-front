@@ -2,7 +2,7 @@ import React from "react";
 import "./StoreItem.css";
 import { useNavigate } from "react-router-dom";
 
-const StoreItem = ({ item, onAddToCart }) => {
+const StoreItem = ({ item }) => {
   const navigate = useNavigate();
 
   return (
@@ -15,7 +15,6 @@ const StoreItem = ({ item, onAddToCart }) => {
       <h3>{item.name}</h3>
       <p className="description">{item.description}</p>
       <p className="price">${item.price}</p>
-      <button onClick={() => onAddToCart(item)}>Add to Cart</button>
     </div>
   );
 };

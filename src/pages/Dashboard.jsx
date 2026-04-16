@@ -5,6 +5,11 @@ import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import "./Dashboard.css";
 
+const API_URL = "http://localhost:3001/users";
+const PRODUCTS_URL = "http://localhost:3001/products";
+
+const getToken = () => localStorage.getItem("token");
+
 const Dashboard = ({ setToast }) => {
   const navigate = useNavigate();
 
@@ -12,6 +17,12 @@ const Dashboard = ({ setToast }) => {
   const [orders, setOrders] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [cards, setCards] = useState([]);
+  const [products, setProducts] = useState([]);
+
+  const [activeTab, setActiveTab] = useState("orders");
+  const [loading, setLoading] = useState(true);
+
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const [addressForm, setAddressForm] = useState({
     country: "",
@@ -28,161 +39,298 @@ const Dashboard = ({ setToast }) => {
     expiration_date: "",
   });
 
-  const [loadingOrders, setLoadingOrders] = useState(true);
-  const [loadingAddresses, setLoadingAddresses] = useState(true);
-  const [loadingCards, setLoadingCards] = useState(true);
+  const [productForm, setProductForm] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image_url: "",
+  });
 
-  const [activeTab, setActiveTab] = useState("orders");
+  const authHeaders = () => ({
+    Authorization: `Bearer ${getToken()}`,
+    "Content-Type": "application/json",
+  });
+
+  const fetchUserDashboardData = async () => {
+    try {
+      const token = getToken();
+      if (!token) return navigate("/login");
+
+      const response = await fetch(`${API_URL}/me`, {
+        headers: authHeaders(),
+      });
+
+      const responseData = await response.json();
+
+      setUserData(responseData.user);
+      setOrders(responseData.orders || []);
+      setAddresses(responseData.addresses || []);
+      setCards(responseData.cards || []);
+    } catch (error) {
+      setToast({ message: error.message, type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(PRODUCTS_URL);
+      const data = await response.json();
+      setProducts(data);
+    } catch {
+      setToast({ message: "Error loading products", type: "error" });
+    }
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return navigate("/login");
+    fetchUserDashboardData();
+  }, []);
 
-    fetch("http://localhost:3001/users/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        setUserData(data.user);
-        setOrders(data.orders || []);
-        setAddresses(data.addresses || []);
-        setCards(data.cards || []);
-      })
-      .catch((err) => setToast(err.message))
-      .finally(() => {
-        setLoadingOrders(false);
-        setLoadingAddresses(false);
-        setLoadingCards(false);
+  useEffect(() => {
+    if (userData?.is_admin) fetchProducts();
+  }, [userData]);
+
+  const handleAddressFieldChange = (field, value) => {
+    setAddressForm((p) => ({ ...p, [field]: value }));
+  };
+
+  const handleCardFieldChange = (field, value) => {
+    setCardForm((p) => ({ ...p, [field]: value }));
+  };
+
+  const createAddress = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(`${API_URL}/address`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify(addressForm),
       });
-  }, [navigate]);
 
-  // FAVORITE ADDRESS
-  const handleSetFavoriteAddress = async (id) => {
-    const token = localStorage.getItem("token");
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
 
-    const res = await fetch(
-      `http://localhost:3001/users/address/${id}/favorite`,
-      {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (!res.ok) return setToast({ message: "Error", type: "error" });
-
-    setAddresses((prev) =>
-      prev.map((a) => ({ ...a, is_favorite: a.id === id }))
-    );
+      setAddresses((p) => [...p, data.address]);
+      setToast({ message: "Address added", type: "success" });
+    } catch (err) {
+      setToast({ message: err.message, type: "error" });
+    }
   };
 
-  // FAVORITE CARD
-  const handleSetFavoriteCard = async (id) => {
-    const token = localStorage.getItem("token");
+  const deleteAddress = async (id) => {
+    try {
+      await fetch(`${API_URL}/address/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
 
-    const res = await fetch(
-      `http://localhost:3001/users/card/${id}/favorite`,
-      {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-
-    if (!res.ok) return setToast({ message: "Error", type: "error" });
-
-    setCards((prev) =>
-      prev.map((c) => ({ ...c, is_favorite: c.id === id }))
-    );
+      setAddresses((p) => p.filter((a) => a.id !== id));
+    } catch {
+      setToast({ message: "Error deleting address", type: "error" });
+    }
   };
 
-  // ADD ADDRESS
-  const handleAddAddress = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
+  const setFavoriteAddress = async (id) => {
+    try {
+      const res = await fetch(`${API_URL}/address/${id}/favorite`, {
+        method: "PUT",
+        headers: authHeaders(),
+      });
+      
+      setToast({ message: "Favorite Update", type: "success" });
+      if (!res.ok) throw new Error();
+      
+      setAddresses((p) =>
+        p.map((a) => ({ ...a, is_favorite: a.id === id }))
+    );
+  } catch {
+    setToast({ message: "Error updating favorite", type: "error" });
+  }
+};
 
-    const res = await fetch("http://localhost:3001/users/address", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(addressForm),
+const createCard = async (e) => {
+  e.preventDefault();
+
+  const { card_number, security_code, expiration_date } = cardForm;
+
+  if (!card_number || !security_code || !expiration_date) {
+    return setToast({
+      message: "All fields are required",
+      type: "error",
     });
+  }
 
-    const data = await res.json();
+  if (card_number.length < 16) {
+    return setToast({
+      message: "Card number must be 16 digits",
+      type: "error",
+    });
+  }
 
-    if (!res.ok) return setToast({ message: data.error, type: "error" });
+  if (security_code.length < 3) {
+    return setToast({
+      message: "Invalid security code",
+      type: "error",
+    });
+  }
 
-    setAddresses((prev) => [...prev, data.address]);
-    setToast({ message: "Address added", type: "success" });
-  };
-
-  // ADD CARD
-  const handleAddCard = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-
-    const res = await fetch("http://localhost:3001/users/card", {
+  try {
+    const response = await fetch(`${API_URL}/card`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
+      headers: authHeaders(),
       body: JSON.stringify(cardForm),
     });
 
-    const data = await res.json();
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error);
 
-    if (!res.ok) return setToast({ message: data.error, type: "error" });
-
-    setCards((prev) => [...prev, data.card]);
+    setCards((p) => [...p, data.card]);
     setToast({ message: "Card added", type: "success" });
-  };
 
-  // DELETE ADDRESS
-  const handleDeleteAddress = async (id) => {
-    const token = localStorage.getItem("token");
-
-    await fetch(`http://localhost:3001/users/address/${id}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
+    setCardForm({
+      card_number: "",
+      security_code: "",
+      expiration_date: "",
     });
+  } catch (err) {
+    setToast({ message: err.message, type: "error" });
+  }
+};
 
-    setAddresses((prev) => prev.filter((a) => a.id !== id));
-  };
-
-  // DELETE CARD
-  const handleDeleteCard = async (id) => {
-    const token = localStorage.getItem("token");
-
-    await fetch(`http://localhost:3001/users/card/${id}`, {
+const deleteCard = async (id) => {
+  try {
+    await fetch(`${API_URL}/card/${id}`, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: authHeaders(),
     });
+    
+    setCards((p) => p.filter((c) => c.id !== id));
+  } catch {
+    setToast({ message: "Error deleting card", type: "error" });
+  }
+};
 
-    setCards((prev) => prev.filter((c) => c.id !== id));
+const setFavoriteCard = async (id) => {
+  try {
+    const res = await fetch(`${API_URL}/card/${id}/favorite`, {
+      method: "PUT",
+      headers: authHeaders(),
+    });
+    
+    setToast({ message: "Favorite Update", type: "success" });
+    if (!res.ok) throw new Error();
+    
+    setCards((p) =>
+      p.map((c) => ({ ...c, is_favorite: c.id === id }))
+  );
+} catch {
+  setToast({ message: "Error updating favorite", type: "error" });
+    }
   };
+
+  const createProduct = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(PRODUCTS_URL, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          ...productForm,
+          price: parseFloat(productForm.price),
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      setProducts((p) => [...p, data.product]);
+      setToast({ message: "Product created", type: "success" });
+      setProductForm({ name: "", description: "", price: "", image_url: "" });
+    } catch (err) {
+      setToast({ message: err.message, type: "error" });
+    }
+  };
+
+  const startEditProduct = (product) => {
+    setEditingProduct(product);
+    setProductForm({
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      image_url: product.image_url,
+    });
+  };
+
+  const updateProduct = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch(
+        `${PRODUCTS_URL}/${editingProduct.id}`,
+        {
+          method: "PUT",
+          headers: authHeaders(),
+          body: JSON.stringify({
+            ...productForm,
+            price: parseFloat(productForm.price),
+          }),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
+
+      setProducts((p) =>
+        p.map((x) => (x.id === editingProduct.id ? data.product : x))
+      );
+
+      setEditingProduct(null);
+      setProductForm({ name: "", description: "", price: "", image_url: "" });
+
+      setToast({ message: "Product updated", type: "success" });
+    } catch (err) {
+      setToast({ message: err.message, type: "error" });
+    }
+  };
+
+  const deleteProduct = async (id) => {
+    try {
+      await fetch(`${PRODUCTS_URL}/${id}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+
+      setProducts((p) => p.filter((x) => x.id !== id));
+    } catch {
+      setToast({ message: "Error deleting product", type: "error" });
+    }
+  };
+
+  if (loading) return <div className="dashboard-container">Loading...</div>;
+
+  const tabs = ["orders", "addresses", "cards"];
+  if (userData?.is_admin) tabs.push("products");
 
   return (
     <div className="dashboard-container">
       <h1>Welcome, {userData?.name || "User"}!</h1>
 
-      {/* TABS */}
       <div className="tabs">
-        {["orders", "addresses", "cards"].map((tab) => (
+        {tabs.map((t) => (
           <button
-            key={tab}
-            className={activeTab === tab ? "active" : ""}
-            onClick={() => setActiveTab(tab)}
+            key={t}
+            className={activeTab === t ? "active" : ""}
+            onClick={() => setActiveTab(t)}
           >
-            {tab.toUpperCase()}
+            {t.toUpperCase()}
           </button>
         ))}
       </div>
 
-      {/* CONTENT */}
-      <div className={`tab-content ${activeTab}`}>
-
-        {/* ORDERS */}
+      <div className="tab-content">
         {activeTab === "orders" && (
           <div className="panel">
             <h2>Orders</h2>
@@ -194,112 +342,84 @@ const Dashboard = ({ setToast }) => {
           </div>
         )}
 
-        {/* ADDRESSES */}
         {activeTab === "addresses" && (
           <div className="panel">
             <h2>Addresses</h2>
-
             {addresses.map((a) => (
               <div key={a.id} className="item">
                 <FontAwesomeIcon
                   icon={a.is_favorite ? solidStar : regularStar}
-                  onClick={() => handleSetFavoriteAddress(a.id)}
-                  className="star"
+                  onClick={() => setFavoriteAddress(a.id)}
                 />
-
                 {a.street}, {a.city}, {a.state}, {a.country}
-
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDeleteAddress(a.id)}
-                >
-                  Delete
-                </button>
+                <button onClick={() => deleteAddress(a.id)}>Delete</button>
               </div>
             ))}
 
-            <form onSubmit={handleAddAddress} className="form">
-              <input placeholder="Country" onChange={(e) =>
-                setAddressForm({ ...addressForm, country: e.target.value })
-              } />
-              <input placeholder="State" onChange={(e) =>
-                setAddressForm({ ...addressForm, state: e.target.value })
-              } />
-              <input placeholder="City" onChange={(e) =>
-                setAddressForm({ ...addressForm, city: e.target.value })
-              } />
-              <input placeholder="Street" onChange={(e) =>
-                setAddressForm({ ...addressForm, street: e.target.value })
-              } />
-              <input placeholder="Number" maxLength={6} onChange={(e) =>
-                setAddressForm({
-                  ...addressForm,
-                  number: e.target.value.replace(/\D/g, ""),
-                })
-              } />
+            <form onSubmit={createAddress} className="form">
+              <input placeholder="Country" onChange={(e) => handleAddressFieldChange("country", e.target.value)} />
+              <input placeholder="State" onChange={(e) => handleAddressFieldChange("state", e.target.value)} />
+              <input placeholder="City" onChange={(e) => handleAddressFieldChange("city", e.target.value)} />
+              <input placeholder="Street" onChange={(e) => handleAddressFieldChange("street", e.target.value)} />
+              <input placeholder="Number" onChange={(e) => handleAddressFieldChange("number", e.target.value.replace(/\D/g, ""))} />
               <button type="submit">Add Address</button>
             </form>
           </div>
         )}
 
-        {/* CARDS */}
         {activeTab === "cards" && (
           <div className="panel">
             <h2>Cards</h2>
-
             {cards.map((c) => (
               <div key={c.id} className="item">
                 <FontAwesomeIcon
                   icon={c.is_favorite ? solidStar : regularStar}
-                  onClick={() => handleSetFavoriteCard(c.id)}
-                  className="star"
+                  onClick={() => setFavoriteCard(c.id)}
                 />
-
-                Card {c.card_number}
-
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDeleteCard(c.id)}
-                >
-                  Delete
-                </button>
+                Card {c.security_code}
+                <button onClick={() => deleteCard(c.id)}>Delete</button>
               </div>
             ))}
 
-            <form onSubmit={handleAddCard} className="form">
-              <input
-                placeholder="Card Number"
-                maxLength={16}
-                onChange={(e) =>
-                  setCardForm({
-                    ...cardForm,
-                    card_number: e.target.value.replace(/\D/g, ""),
-                  })
-                }
-              />
-
-              <input
-                placeholder="Security Code"
-                maxLength={4}
-                onChange={(e) =>
-                  setCardForm({
-                    ...cardForm,
-                    security_code: e.target.value.replace(/\D/g, ""),
-                  })
-                }
-              />
-
-              <input
-                type="date"
-                onChange={(e) =>
-                  setCardForm({
-                    ...cardForm,
-                    expiration_date: e.target.value,
-                  })
-                }
-              />
-
+            <form onSubmit={createCard} className="form">
+              <input maxLength={16} inputMode="numeric" pattern="[0-9]*" placeholder="Card Number" onChange={(e) => handleCardFieldChange("card_number", e.target.value.replace(/\D/g, ""))} />
+              <input maxLength={4} inputMode="numeric" pattern="[0-9]*" placeholder="Security Code" onChange={(e) => handleCardFieldChange("security_code", e.target.value.replace(/\D/g, ""))} />
+              <input type="date" onChange={(e) => handleCardFieldChange("expiration_date", e.target.value)} />
               <button type="submit">Add Card</button>
+            </form>
+          </div>
+        )}
+
+        {activeTab === "products" && userData?.is_admin && (
+          <div className="panel">
+            <h2>Products</h2>
+
+            {products.map((p) => (
+              <div key={p.id} className="item">
+                {p.name} - ${p.price}
+                <button onClick={() => startEditProduct(p)}>Edit</button>
+                <button onClick={() => deleteProduct(p.id)}>Delete</button>
+              </div>
+            ))}
+
+            <form onSubmit={editingProduct ? updateProduct : createProduct} className="form">
+              <input value={productForm.name} placeholder="Name" onChange={(e) => setProductForm({ ...productForm, name: e.target.value })} />
+              <input value={productForm.description} placeholder="Description" onChange={(e) => setProductForm({ ...productForm, description: e.target.value })} />
+              <input value={productForm.price} placeholder="Price" onChange={(e) => setProductForm({ ...productForm, price: e.target.value })} />
+              <input value={productForm.image_url} placeholder="Image URL" onChange={(e) => setProductForm({ ...productForm, image_url: e.target.value })} />
+
+              <button type="submit">
+                {editingProduct ? "Update Product" : "Add Product"}
+              </button>
+
+              {editingProduct && (
+                <button type="button" onClick={() => {
+                  setEditingProduct(null);
+                  setProductForm({ name: "", description: "", price: "", image_url: "" });
+                }}>
+                  Cancel
+                </button>
+              )}
             </form>
           </div>
         )}

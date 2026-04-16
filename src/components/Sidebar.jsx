@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
   faInfoCircle,
+  faShoppingCart,
   faTachometerAlt
 } from "@fortawesome/free-solid-svg-icons";
 import "./Sidebar.css";
@@ -18,7 +19,10 @@ const Sidebar = ({ isOpen }) => {
     { name: "Home", path: "/", icon: faHome },
     { name: "About", path: "/about", icon: faInfoCircle },
     ...(isLoggedIn
-      ? [{ name: "Dashboard", path: "/dashboard", icon: faTachometerAlt }]
+      ? [{ name: "Cart", path: "/cart", icon: faShoppingCart}]
+      : []),
+    ...(isLoggedIn
+      ? [{ name: "Dashboard", path: "/dashboard", icon: faTachometerAlt}]
       : []),
   ];
 

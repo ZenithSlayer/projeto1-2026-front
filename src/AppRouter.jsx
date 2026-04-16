@@ -1,5 +1,6 @@
 import React, { lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useCart } from "./context/CartContext"; // ✅ ADD THIS
 
 const Home = lazy(() => import("./pages/Home"));
 const About = lazy(() => import("./pages/About"));
@@ -7,6 +8,7 @@ const ProductPage = lazy(() => import("./pages/ProductPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
+const CartPage = lazy(() => import("./pages/CartPage"));
 
 const isAuthenticated = () => !!localStorage.getItem("token");
 
@@ -23,11 +25,19 @@ const PublicRoute = ({ children }) => {
 };
 
 const AppRouter = ({ setToast }) => {
+  const { addToCart } = useCart();
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
-      <Route path="/product/:id" element={<ProductPage />} />
+
+      <Route
+        path="/product/:id"
+        element={<ProductPage onAddToCart={addToCart} setToast={setToast} />}
+      />
+
+      <Route path="/cart" element={<CartPage />} />
 
       <Route
         path="/auth"
