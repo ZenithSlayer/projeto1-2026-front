@@ -1,4 +1,4 @@
-const BASE_URL = "http://172.16.5.194:3001";
+const BASE_URL = "http://localhost:3001";
 
 const getHeaders = (): Record<string, string> => ({
   "Content-Type": "application/json",

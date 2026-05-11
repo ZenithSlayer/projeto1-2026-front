@@ -3,10 +3,10 @@ import { api } from "../../../services/api";
 
 export const ProductPanel = ({ data, setData, setToast }) => {
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState({ name: "", description: "", price: "", image_url: "" });
+  const [form, setForm] = useState({ name: "", description: "", price: "", category_name: "", image_url: "" });
 
   const resetForm = () => {
-    setForm({ name: "", description: "", price: "", image_url: "" });
+    setForm({ name: "", description: "", price: "", category_name: "", image_url: "" });
     setEditingId(null);
   };
 
@@ -81,6 +81,7 @@ export const ProductPanel = ({ data, setData, setToast }) => {
         <input placeholder="Product Name" value={form.name} onChange={input => setForm({ ...form, name: input.target.value })} />
         <input placeholder="Price" value={form.price} onChange={input => setForm({ ...form, price: input.target.value })} />
         <textarea placeholder="Description" value={form.description} onChange={input => setForm({ ...form, description: input.target.value })} />
+        <input placeholder="Category" value={form.category_name} onChange={input => setForm({ ...form, category_name: input.target.category_name })} />
         <input placeholder="Image URL" value={form.image_url} onChange={input => setForm({ ...form, image_url: input.target.value })} />
 
         <div className="form-actions">
