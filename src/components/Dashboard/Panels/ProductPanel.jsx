@@ -18,23 +18,33 @@ export const ProductPanel = ({ data, setData, setToast }) => {
   const handleSubmit = async (input) => {
     input.preventDefault();
     const payload = { ...form, price: parseFloat(form.price) };
-    
+
     try {
-      if (editingId) {
-        const res = await api.put(`/products/${editingId}`, payload);
-        setData(prev => ({
-          ...prev,
-          products: prev.products.map(product => product.id === editingId ? res.product : product)
-        }));
-        setToast({ message: "Product updated", type: "success" });
-      } else {
-        const res = await api.post("/products", payload);
-        setData(prev => ({ ...prev, products: [...prev.products, res.product] }));
-        setToast({ message: "Product created", type: "success" });
+      const res = await api[editingId ? 'put' : 'post'](
+        editingId ? `/products/${editingId}` : "/products",
+        payload
+      );
+
+      const updatedProduct = res.product || res.data || res;
+
+      if (!updatedProduct || !updatedProduct.id) {
+        throw new Error("API did not return a valid product object");
       }
+
+      setData(prev => ({
+        ...prev,
+        products: editingId
+          ? prev.products.map(p => p.id === editingId ? updatedProduct : p)
+          : [...prev.products, updatedProduct]
+      }));
+
+      setToast({
+        message: editingId ? "Product updated" : "Product created",
+        type: "success"
+      });
       resetForm();
     } catch (err) {
-      setToast({ message: err.message, type: "error" });
+      setToast({ message: err.response?.data?.message || err.message, type: "error" });
     }
   };
 
@@ -68,11 +78,11 @@ export const ProductPanel = ({ data, setData, setToast }) => {
 
       <form onSubmit={handleSubmit} className="form">
         <h3>{editingId ? "Edit Product" : "Create New Product"}</h3>
-        <input placeholder="Product Name" value={form.name} onChange={input => setForm({...form, name: input.target.value})} />
-        <input placeholder="Price" value={form.price} onChange={input => setForm({...form, price: input.target.value})} />
-        <textarea placeholder="Description" value={form.description} onChange={input => setForm({...form, description: input.target.value})} />
-        <input placeholder="Image URL" value={form.image_url} onChange={input => setForm({...form, image_url: input.target.value})} />
-        
+        <input placeholder="Product Name" value={form.name} onChange={input => setForm({ ...form, name: input.target.value })} />
+        <input placeholder="Price" value={form.price} onChange={input => setForm({ ...form, price: input.target.value })} />
+        <textarea placeholder="Description" value={form.description} onChange={input => setForm({ ...form, description: input.target.value })} />
+        <input placeholder="Image URL" value={form.image_url} onChange={input => setForm({ ...form, image_url: input.target.value })} />
+
         <div className="form-actions">
           <button className="submit-btn" type="submit">{editingId ? "Update Product" : "Add Product"}</button>
           {editingId && <button type="button" className="cancel-btn" onClick={resetForm}>Cancel</button>}

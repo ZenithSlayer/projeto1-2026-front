@@ -11,7 +11,7 @@ const Dashboard = ({ setToast }) => {
   const { data, setData, loading } = useDashboardData(setToast);
   const [activeTab, setActiveTab] = useState("account");
 
-  if (loading) return <div className="dashboard-container">Loading Dashboard...</div>;
+  if (loading) return <div className="container">Loading Dashboard...</div>;
 
   const tabs = ["account", "orders", "addresses", "cards"];
   if (data.user?.is_admin) tabs.push("products");

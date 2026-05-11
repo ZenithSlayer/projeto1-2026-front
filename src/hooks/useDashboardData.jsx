@@ -29,7 +29,8 @@ export const useDashboardData = (setToast) => {
       setLoading(false);
     }
   };
-
+  
+  // eslint-disable-next-line
   useEffect(() => { fetchData(); }, []);
 
   return { data, setData, loading, reload: fetchData };

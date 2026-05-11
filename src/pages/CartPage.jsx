@@ -35,7 +35,7 @@ const CartPage = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:3001/orders", {
+      const response = await fetch("http://172.16.5.194:3001/orders", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

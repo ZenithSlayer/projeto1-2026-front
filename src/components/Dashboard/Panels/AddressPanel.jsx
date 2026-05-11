@@ -15,7 +15,6 @@ export const AddressPanel = ({ data, setData, setToast }) => {
     postal_code: ""
   });
 
-  // Safe access to addresses list
   const addresses = data?.addresses || [];
 
   const resetForm = () => {
@@ -69,8 +68,8 @@ export const AddressPanel = ({ data, setData, setToast }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (input) => {
+    input.preventDefault();
     
     const allFieldsFilled = Object.values(form).every(value => 
       value && value.toString().trim() !== ""
@@ -92,7 +91,6 @@ export const AddressPanel = ({ data, setData, setToast }) => {
         setToast({ message: "Address updated successfully", type: "success" });
       } else {
         const res = await addressesApi.create(form);
-        // If backend doesn't return res.address, we use the form data + temp ID
         const newAddress = res.address || { ...form, id: Date.now(), is_favorite: 0 };
         setData(prev => ({
           ...prev,
@@ -115,7 +113,6 @@ export const AddressPanel = ({ data, setData, setToast }) => {
           <p className="empty-message">No addresses saved yet.</p>
         ) : (
           addresses.map(addr => {
-            // CRITICAL: Guard against undefined address items
             if (!addr) return null;
 
             return (
@@ -148,32 +145,32 @@ export const AddressPanel = ({ data, setData, setToast }) => {
           <input 
             placeholder="Country" 
             value={form.country} 
-            onChange={e => handleFieldChange("country", e.target.value)} 
+            onChange={input => handleFieldChange("country", input.target.value)} 
           />
           <input 
             placeholder="State" 
             value={form.state} 
-            onChange={e => handleFieldChange("state", e.target.value)} 
+            onChange={input => handleFieldChange("state", input.target.value)} 
           />
           <input 
             placeholder="City" 
             value={form.city} 
-            onChange={e => handleFieldChange("city", e.target.value)} 
+            onChange={input => handleFieldChange("city", input.target.value)} 
           />
           <input 
             placeholder="Street" 
             value={form.street} 
-            onChange={e => handleFieldChange("street", e.target.value)} 
+            onChange={input => handleFieldChange("street", input.target.value)} 
           />
           <input 
             placeholder="Number" 
             value={form.number} 
-            onChange={e => handleFieldChange("number", e.target.value.replace(/\D/g, ""))} 
+            onChange={input => handleFieldChange("number", input.target.value.replace(/\D/g, ""))} 
           />
           <input 
             placeholder="Postal Code" 
             value={form.postal_code} 
-            onChange={e => handleFieldChange("postal_code", e.target.value)} 
+            onChange={input => handleFieldChange("postal_code", input.target.value)} 
           />
         </div>
         <div className="form-actions">

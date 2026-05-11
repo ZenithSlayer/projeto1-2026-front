@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { useCart } from "./context/CartContext";
 
 const Home = lazy(() => import("./pages/Home"));
-const About = lazy(() => import("./pages/About"));
+const Search = lazy(() => import("./pages/Search"));
 const ProductPage = lazy(() => import("./pages/ProductPage"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ErrorPage = lazy(() => import("./pages/ErrorPage"));
@@ -31,7 +31,7 @@ const AppRouter = ({ setToast }) => {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
+      <Route path="/search" element={<Search />} />
       <Route path="/cart" element={<CartPage />} />
       <Route path="/store" element={<StorePage />} />
 

@@ -11,7 +11,7 @@ const StoreItem = ({ item }) => {
       className="store-item"
       onClick={() => navigate(`/product/${item.id}`, { replace: true })}
     >
-      <img src={item.image || placeHolder} alt={item.name} />
+      <img src={item.image_url || placeHolder} alt={item.name} />
       <h3>{item.name}</h3>
       <p className="description">{item.description}</p>
       <p className="price">${item.price}</p>

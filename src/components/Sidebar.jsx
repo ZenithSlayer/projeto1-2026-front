@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faHome,
-  faInfoCircle,
+  faMagnifyingGlass,
   faShoppingCart,
   faTachometerAlt,
   faRightFromBracket,
@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const menu = [
     { name: "Home", path: "/", icon: faHome },
-    { name: "About", path: "/about", icon: faInfoCircle },
+    { name: "Search", path: "/search", icon: faMagnifyingGlass },
     ...(isLoggedIn
       ? [{ name: "Cart", path: "/cart", icon: faShoppingCart}]
       : []),

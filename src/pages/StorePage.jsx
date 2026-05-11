@@ -3,7 +3,7 @@ import ItemRow from "../components/ItemRow.jsx";
 import { productsApi } from "../services/products";
 import "./style/StorePage.css";
 
-const StorePage = () => {
+const StorePage = ({ categoryId }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
@@ -14,8 +14,14 @@ const StorePage = () => {
 
   useEffect(() => {
     const fetchAll = async () => {
+      let data = []
       try {
-        const data = await productsApi.getAll();
+          if (categoryId) {
+            data = await productsApi.getAllCategory(categoryId);
+          }
+          else {
+            data = await productsApi.getAll();
+          }
         setProducts(data);
       } catch (err) {
         console.error("Store Error:", err);
@@ -24,7 +30,7 @@ const StorePage = () => {
       }
     };
     fetchAll();
-  }, []);
+  }, [categoryId]);
 
   const totalPages = Math.ceil(products.length / itemsPerPage);
   const startIndex = currentPage * itemsPerPage;
@@ -39,6 +45,12 @@ const StorePage = () => {
 
   return (
     <div className="store-container">
+
+      <div className="product-grid-vertical">
+        {rows.map((rowItems, index) => (
+          <ItemRow key={`${currentPage}-${index}`} products={rowItems} />
+        ))}
+      </div>
       {totalPages > 1 && (
         <div className="pagination-bar">
           <button
@@ -66,12 +78,6 @@ const StorePage = () => {
           </button>
         </div>
       )}
-
-      <div className="product-grid-vertical">
-        {rows.map((rowItems, index) => (
-          <ItemRow key={`${currentPage}-${index}`} products={rowItems} />
-        ))}
-      </div>
     </div>
   );
 };
