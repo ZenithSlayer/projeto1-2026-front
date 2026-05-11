@@ -11,7 +11,7 @@ export const CartProvider = ({ children }) => {
 
   const fetchCart = useCallback(async () => {
     const token = getToken();
-    if (!token) return; // Don't fetch if not logged in
+    if (!token) return;
 
     try {
       const res = await fetch(API_URL, {
@@ -22,7 +22,6 @@ export const CartProvider = ({ children }) => {
       });
 
       const data = await res.json();
-      // Ensure we always set an array to avoid .map() crashes
       setCart(Array.isArray(data) ? data : data.items || []);
     } catch (err) {
       console.error("Error loading cart:", err);

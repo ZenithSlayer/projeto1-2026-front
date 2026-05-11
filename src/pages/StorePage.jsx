@@ -39,33 +39,39 @@ const StorePage = () => {
 
   return (
     <div className="store-container">
-      <div className="product-grid-vertical">
-        {rows.map((rowItems, index) => (
-          <ItemRow key={`${currentPage}-${index}`} products={rowItems} />
-        ))}
-      </div>
-
       {totalPages > 1 && (
         <div className="pagination-bar">
-          <button 
-            disabled={currentPage === 0} 
-            onClick={() => { setCurrentPage(p => p - 1); window.scrollTo(0,0); }}
+          <button
+            disabled={currentPage === 0}
+            onClick={() => {
+              setCurrentPage((p) => p - 1);
+              window.scrollTo(0, 0);
+            }}
           >
             &larr; Previous
           </button>
-          
+
           <span className="page-indicator">
             Page {currentPage + 1} of {totalPages}
           </span>
 
-          <button 
-            disabled={currentPage === totalPages - 1} 
-            onClick={() => { setCurrentPage(p => p + 1); window.scrollTo(0,0); }}
+          <button
+            disabled={currentPage === totalPages - 1}
+            onClick={() => {
+              setCurrentPage((p) => p + 1);
+              window.scrollTo(0, 0);
+            }}
           >
             Next &rarr;
           </button>
         </div>
       )}
+
+      <div className="product-grid-vertical">
+        {rows.map((rowItems, index) => (
+          <ItemRow key={`${currentPage}-${index}`} products={rowItems} />
+        ))}
+      </div>
     </div>
   );
 };

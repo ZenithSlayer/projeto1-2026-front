@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar as solidStar } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
-import { addressesApi } from "../../../services/addresses";
+import { addressesApi } from "../../../services/addresses.ts";
 
 export const AddressPanel = ({ data, setData, setToast }) => {
   const [editingId, setEditingId] = useState(null);
