@@ -18,6 +18,7 @@ const StorePage = ({ categoryId }) => {
       try {
           if (categoryId) {
             data = await productsApi.getAllCategory(categoryId);
+            setCurrentPage(0)
           }
           else {
             data = await productsApi.getAll();

@@ -17,34 +17,34 @@ export const ProductPanel = ({ data, setData, setToast }) => {
 
   const handleSubmit = async (input) => {
     input.preventDefault();
-    const payload = { ...form, price: parseFloat(form.price) };
+
+    if (!form.name || !form.description || !form.price || !form.category_name) {
+      setToast({ message: "Please fill in all required fields", type: "error" });
+      return;
+    }
+
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const currentAdminId = storedUser?.id;
+
+    if (!currentAdminId) {
+      setToast({ message: "Session expired. Please log in again.", type: "error" });
+      return;
+    }
+
+    const payload = { 
+      ...form, 
+      price: parseFloat(form.price),
+      admin_id: currentAdminId
+    };
 
     try {
-      const res = await api[editingId ? 'put' : 'post'](
+      await api[editingId ? 'put' : 'post'](
         editingId ? `/products/${editingId}` : "/products",
         payload
       );
-
-      const updatedProduct = res.product || res.data || res;
-
-      if (!updatedProduct || !updatedProduct.id) {
-        throw new Error("API did not return a valid product object");
-      }
-
-      setData(prev => ({
-        ...prev,
-        products: editingId
-          ? prev.products.map(p => p.id === editingId ? updatedProduct : p)
-          : [...prev.products, updatedProduct]
-      }));
-
-      setToast({
-        message: editingId ? "Product updated" : "Product created",
-        type: "success"
-      });
-      resetForm();
+      
     } catch (err) {
-      setToast({ message: err.response?.data?.message || err.message, type: "error" });
+      setToast({ message: err.response?.data?.message || "Error saving product", type: "error" });
     }
   };
 
@@ -61,6 +61,19 @@ export const ProductPanel = ({ data, setData, setToast }) => {
   return (
     <div className="panel">
       <h2>Inventory Management</h2>
+      <form onSubmit={handleSubmit} className="form">
+        <h3>{editingId ? "Edit Product" : "Create New Product"}</h3>
+        <input placeholder="Product Name" value={form.name} onChange={input => setForm({ ...form, name: input.target.value })} />
+        <input placeholder="Price" type="number" value={form.price} onChange={input => setForm({ ...form, price: input.target.value })} />
+        <textarea placeholder="Description" value={form.description} onChange={input => setForm({ ...form, description: input.target.value })} />
+        <input placeholder="Category" value={form.category_name} onChange={input => setForm({ ...form, category_name: input.target.value })} />
+        <input placeholder="Image URL" value={form.image_url} onChange={input => setForm({ ...form, image_url: input.target.value })} />
+
+        <div className="form-actions">
+          <button className="submit-btn" type="submit">{editingId ? "Update Product" : "Add Product"}</button>
+          {editingId && <button type="button" className="cancel-btn" onClick={resetForm}>Cancel</button>}
+        </div>
+      </form>
       <div className="item-list">
         {data.products.map(product => (
           <div key={product.id} className="item">
@@ -76,19 +89,6 @@ export const ProductPanel = ({ data, setData, setToast }) => {
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="form">
-        <h3>{editingId ? "Edit Product" : "Create New Product"}</h3>
-        <input placeholder="Product Name" value={form.name} onChange={input => setForm({ ...form, name: input.target.value })} />
-        <input placeholder="Price" value={form.price} onChange={input => setForm({ ...form, price: input.target.value })} />
-        <textarea placeholder="Description" value={form.description} onChange={input => setForm({ ...form, description: input.target.value })} />
-        <input placeholder="Category" value={form.category_name} onChange={input => setForm({ ...form, category_name: input.target.category_name })} />
-        <input placeholder="Image URL" value={form.image_url} onChange={input => setForm({ ...form, image_url: input.target.value })} />
-
-        <div className="form-actions">
-          <button className="submit-btn" type="submit">{editingId ? "Update Product" : "Add Product"}</button>
-          {editingId && <button type="button" className="cancel-btn" onClick={resetForm}>Cancel</button>}
-        </div>
-      </form>
     </div>
   );
 };

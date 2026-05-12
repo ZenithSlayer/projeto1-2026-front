@@ -22,16 +22,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     { name: "Home", path: "/", icon: faHome },
     { name: "Search", path: "/search", icon: faMagnifyingGlass },
     ...(isLoggedIn
-      ? [{ name: "Cart", path: "/cart", icon: faShoppingCart}]
+      ? [{ name: "Cart", path: "/cart", icon: faShoppingCart }]
       : []),
     ...(isLoggedIn
-      ? [{ name: "Dashboard", path: "/dashboard", icon: faTachometerAlt}]
+      ? [{ name: "Dashboard", path: "/dashboard", icon: faTachometerAlt }]
       : []),
   ];
 
   const handleAuthClick = () => {
     if (isLoggedIn) {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       navigate("/auth");
     } else {
       navigate("/auth");
@@ -47,9 +48,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           <Link
             key={item.path}
             to={item.path}
-            className={`link ${isActive ? "active" : ""} ${
-              isOpen ? "open" : "closed"
-            }`}
+            className={`link ${isActive ? "active" : ""} ${isOpen ? "open" : "closed"
+              }`}
           >
             <FontAwesomeIcon icon={item.icon} />
             {isOpen && <span>{item.name}</span>}
@@ -59,7 +59,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
       <button
         onClick={handleAuthClick}
-        className={`link auth-logout-button ${isLoggedIn ? "logout" : "auth"}`} 
+        className={`link auth-logout-button ${isLoggedIn ? "logout" : "auth"} ${isOpen ? "open" : "closed"}`}
       >
         <FontAwesomeIcon
           icon={isLoggedIn ? faRightFromBracket : faRightToBracket}

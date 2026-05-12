@@ -80,19 +80,11 @@ const ProductPage = ({ onAddToCart, setToast }) => {
             <button
               className="add-btn"
               onClick={() => {
-                if (typeof onAddToCart === "function") {
-                  onAddToCart(product, quantity);
-                  setToast({
-                    message: `${quantity}x ${product.name} added to cart`,
-                    type: "success",
-                  });
-                } else {
-                  setToast({
-                    message: `${quantity}x ${product.name} added to cart`,
-                    type: "success",
-                  });
-                  console.warn("onAddToCart is not provided");
-                }
+                onAddToCart(product, quantity);
+                setToast({
+                  message: `${quantity}x ${product.name} added to cart`,
+                  type: "success",
+                });
               }}
             >
               Add to Cart

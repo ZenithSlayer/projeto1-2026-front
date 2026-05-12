@@ -15,30 +15,32 @@ const Login = ({ setToast }) => {
   };
 
   const handleSubmit = async (input) => {
-    input.preventDefault();
+  input.preventDefault();
 
-    if (!form.identifier)
-      return setToast({
-        message: "Email or username is required.",
-        type: "error",
-      });
+  if (!form.identifier)
+    return setToast({ message: "Email or username is required.", type: "error" });
 
-    if (!form.password)
-      return setToast({ message: "Password is required.", type: "error" });
+  if (!form.password)
+    return setToast({ message: "Password is required.", type: "error" });
 
-    try {
-      const data = await authApi.login({
-        identifier: form.identifier,
-        password: form.password,
-      });
+  try {
+    const data = await authApi.login({
+      identifier: form.identifier,
+      password: form.password,
+    });
 
-      localStorage.setItem("token", data.token);
-      setToast({ message: "Login successful!", type: "success" });
-      setTimeout(() => navigate("/dashboard"), 1000);
-    } catch (err) {
-      setToast({ message: err.message, type: "error" });
+    localStorage.setItem("token", data.token);
+
+    if (data.user) {
+      localStorage.setItem("user", JSON.stringify(data.user));
     }
-  };
+
+    setToast({ message: "Login successful!", type: "success" });
+    setTimeout(() => navigate("/dashboard"), 1000);
+  } catch (err) {
+    setToast({ message: err.message, type: "error" });
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} noValidate>
